@@ -1,0 +1,114 @@
+.twitter-post {
+	position: relative;
+}
+
+.twitter-post .twitter-post-content {
+	margin: 0 0 33px;
+	padding: 16px 14px;
+	background: #dce7ef;
+	color: #70787e;
+	font-size: 16px;
+	line-height: 19px;
+	border-radius: 2px;
+}
+
+.twitter-post h2 {
+	margin: 0 0 0 50px;
+	top: 15px;
+	position: absolute;
+	font-size: 1.6em;
+}
+
+.twitter-post h3 {
+	margin: 0 0 0 50px;
+	top: 40px;
+	position: absolute;
+	font-size: 0.875em;
+}
+
+.twitter-post p {
+	padding-top: 10px;
+}
+
+.twitter-post time {
+	font-size: 12px;
+	color: #999;
+	right: 10px;
+	top: 5px;
+	position: absolute;
+}
+
+.twitter-post img {
+	width: 40px;
+	height: 40px;
+	border-radius: 3px;
+}
+
+.twitter-post aside {
+	position:absolute;
+	font-size: 20px;
+	bottom: -30px;
+	right: 0;
+}
+
+.twitter-post aside a {
+	text-decoration: none!important;
+	margin-left: 4px;
+	color: #8c9297;
+}
+
+.twitter-post aside a:hover{
+	text-decoration: none!important;
+}
+
+a [class^="icon-"], a [class*=" icon-"] {
+	display: inline;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+	display: inline;
+	width: auto;
+	height: auto;
+	line-height: normal;
+	vertical-align: baseline;
+	background-image: none;
+	background-position: 0 0;
+	background-repeat: repeat;
+	margin-top: 0;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+	font-family: FontAwesome;
+	font-weight: normal;
+	font-style: normal;
+	text-decoration: inherit;
+	-webkit-font-smoothing: antialiased;
+}
+
+.icon-mail-reply:before, .icon-reply:before {
+	content: "\f112";
+}
+
+.icon-retweet:before {
+content: "\f079";
+}
+
+.icon-star:before {
+content: "\f005";
+}
+
+.twitter-post>a.icon-twitter-a {
+	position:absolute;
+	font-size: 24px;
+	color: #8c9297;
+	bottom: -30px;
+	left: 0;
+}
+
+.twitter-post>a.icon-twitter-a {
+	text-decoration:none;
+}
+
+.icon-twitter:before {
+	content: "\f099";
+}

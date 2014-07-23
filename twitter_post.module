@@ -1,0 +1,216 @@
+<?php
+
+/**
+ * Implements hook_block_info().
+ */
+function twitter_post_block_info() {
+  $blocks['twitter_post'] = array(
+    // The name that will appear in the block list.
+    'info' => t('Twitter Post'),
+    // Default setting.
+    'cache' => DRUPAL_CACHE_PER_ROLE,
+  );
+  return $blocks;
+}
+
+/**
+ * Implements hook_menu().
+ */
+function twitter_post_menu() {
+  $items = array();
+
+  $items['admin/config/content/twitter_post'] = array(
+    'title' => 'Twitter Post config',
+    'description' => 'Configuration for Twitter Post module',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('twitter_post_form'),
+    'access arguments' => array('access administration pages'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+
+/**
+ * Implements initial loading for the block().
+ *
+ * Prepares the contents of the block.
+ */
+function twitter_post_init(){
+	      
+	//$GLOBALS['event_type_headings'] = $event_type_headings;
+    
+}
+
+/**
+ * Implements hook_block_view().
+ *
+ * Prepares the contents of the block.
+ */
+function twitter_post_block_view($delta = '') {
+  switch ($delta) {
+    case 'twitter_post':
+      	$block['subject'] = t('Twitter');
+      	if (user_access('access content')) {
+      	
+      		drupal_add_css(drupal_get_path('module', 'twitter_post') . '/css/twitter_post.css', array('group' => CSS_DEFAULT, 'type' => 'file'));
+      		
+      		drupal_add_css('//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css', array('group' => CSS_THEME, 'type' => 'external'));
+      		        
+        	$content = twitter_post_contents();
+        
+        	$block['content'] = $content;
+        
+		}
+    return $block;
+  }
+}
+
+function twitter_post_form($form, &$form_state) {
+  $form = array();
+  $form['twitter_post_username'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Twitter Username'),
+    '#default_value' => variable_get('twitter_post_username', ""),
+    '#size' => 30,
+    '#maxlength' => 30,
+    '#description' => t("The username for the twitter account to display ( DO NOT include the '@' )"),
+    '#required' => TRUE,
+  );
+  return system_settings_form($form);
+}
+
+function time_elapsed_string($datetime) {
+    $now = new DateTime;
+    $ago = new DateTime($datetime);
+    $diff = $now->diff($ago);
+
+    $string = array(
+        'y' => 'year',
+        'm' => 'month',
+        'd' => 'day',
+        'h' => 'hour',
+        'i' => 'minute',
+        's' => 'second',
+    );
+    foreach ($string as $k => $v) {
+        if ($diff->$k) {
+            return $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '') . ' ago';
+        }
+    }
+    return 'just now';
+}
+
+function makeClickableLinks($s) {
+	$s = preg_replace('@(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.-]*(\?\S+)?)?)?)@', '<a href="$1">$1</a>', $s);
+	$s = preg_replace('#@([\\d\\w]+)#', '<a href="http://twitter.com/$1">$0</a>', $s);
+	$s = preg_replace('/#([\\d\\w]+)/', '<a href="http://twitter.com/#search?q=%23$1">$0</a>', $s);
+    return $s;
+}
+
+function getCurrentTweet(){
+	$result = "";
+	
+	//$cache = Mage::app()->getCache();
+	
+	//$cache_result = $cache->load("tweet");
+	
+	//if($cache_result == false){
+		
+		//$cache->clean(array("twitter_cache"));
+	
+		$amount = 1;
+		$username = variable_get("twitter_post_username", "");
+	
+		$settings = array(
+			'oauth_access_token' => "291090092-LrAaOhaIWTkcoWU1mOJuUALcS6LqULKkEOz4zrjw",
+			'oauth_access_token_secret' => "b8eFfQWrQpDOhxzOyzbdf6sQDSy7zYYEsB2M2Mv0sKo",
+			'consumer_key' => "mD8CXHoxkDbiEcHYX36ykg",
+			'consumer_secret' => "nt4OY4mfY4j81mC7qGSwri97hNLtZzUZu49xE5u3OY"
+		);
+	
+		$url = 'https://api.twitter.com/1.1/statuses/user_timeline.json';
+		$getfield = '?screen_name='.$username.'&count='.$amount;
+		$requestMethod = 'GET';
+		
+		require_once('TwitterAPIExchange.php');
+
+		$twitter = new TwitterAPIExchange($settings);
+		$tweet = json_decode($twitter->setGetfield($getfield)
+				 ->buildOauth($url, $requestMethod)
+				 ->performRequest(),true);
+			 
+		/*for($i=0;$i<$amount;$i++){
+			 
+			$result .= makeClickableLinks($tweet[$i]['text']);
+			$result .= ('<br>');
+				
+			$date = explode(" ", $tweet[$i]['created_at']);
+			$datetime = $date[sizeof($date)-1] . "-" .date('m', strtotime($date[1])). "-" . $date[2] . " " . $date[3];
+			$result .= time_elapsed_string($datetime);
+			$result .= '<br><br>';
+		}*/
+		
+		//$cache->save($result, "tweet", array("twitter_cache"), 3600);  //3600 = 1 hour in seconds
+		
+		$result .= "<!-- TWEET WAS NOT CACHED -->";
+    
+    //}else{
+    	//$result = $cache_result;
+    	
+    	//$result .= "<!-- TWEET WAS CACHED -->";
+    //}   
+    
+    return $tweet[0];
+    
+}
+
+/**
+ * Custom content function.
+ *
+ *
+ * @return
+ *   The Html for the Exelin Events Block
+ */
+function twitter_post_contents(){
+
+	$content = "";
+	
+	$username = variable_get("twitter_post_username", "");
+	
+	if($username != ""){
+	
+		$tweet = getCurrentTweet();
+	
+		$content .= '<div class="twitter-post">';
+			$content .= '<a href="https://twitter.com/'.$username.'" target="_blank" class="icon-twitter-a"><i class="icon-twitter"></i></a>';
+		$content .= '<div class="content twitter-post-content">';
+			$date = explode(" ", $tweet['created_at']);
+			$datetime = $date[2] . " " .$date[1]. " " . $date[sizeof($date)-1];
+			$content .= '<time>'.$datetime.'</time>';
+			$content .= '<img src="'.$tweet['user']['profile_image_url_https'].'">';
+			$content .= '<h2>'.$tweet['user']['name'].'</h2>';
+			$content .= '<h3>@'.$username.'</h3>';
+			$content .= '<p>'.makeClickableLinks($tweet['text']).'</p>';
+  		$content .= '</div>';
+    	$content .= '<div class="block-footer twitter-post-footer">';
+    		$content .= '<aside>';
+    			$content .= '<a href="https://twitter.com/intent/tweet?in_reply_to='.$tweet['id'].'" target="_blank"><i class="icon-reply"></i></a>';
+    			$content .= '<a href="https://twitter.com/intent/retweet?tweet_id='.$tweet['id'].'" target="_blank"><i class="icon-retweet"></i></a>';
+    			$content .= '<a href="https://twitter.com/intent/favorite?tweet_id='.$tweet['id'].'" target="_blank"><i class="icon-star"></i></a>';
+  			$content .= '</aside>';
+    	$content .= '</div>';
+  
+  
+		$content .= '</div>';
+	}else{
+		$content .= '<div class="block-twitter-post">';
+		$content .= '<div class="content twitter-post-content">';
+			$content .= '<p>Please set the Username for the user in the Configuration for this module</p>';
+		$content .= '</div>';
+		$content .= '</div>';
+	}
+	
+	return $content;
+}

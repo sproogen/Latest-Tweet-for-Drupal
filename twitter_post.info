@@ -1,0 +1,8 @@
+name = Twitter Post
+description = A Block to display a users latest tweet.
+package = JamesG
+core = 7.x
+
+version = 7.x-1.2
+
+configure = admin/config/content/twitter_post
