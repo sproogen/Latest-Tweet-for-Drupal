@@ -112,57 +112,28 @@ function makeClickableLinks($s) {
 function getCurrentTweet(){
 	$result = "";
 	
-	//$cache = Mage::app()->getCache();
+	$amount = 1;
+	$username = variable_get("twitter_post_username", "");
 	
-	//$cache_result = $cache->load("tweet");
+	$settings = array(
+		'oauth_access_token' => "291090092-LrAaOhaIWTkcoWU1mOJuUALcS6LqULKkEOz4zrjw",
+		'oauth_access_token_secret' => "b8eFfQWrQpDOhxzOyzbdf6sQDSy7zYYEsB2M2Mv0sKo",
+		'consumer_key' => "mD8CXHoxkDbiEcHYX36ykg",
+		'consumer_secret' => "nt4OY4mfY4j81mC7qGSwri97hNLtZzUZu49xE5u3OY"
+	);
 	
-	//if($cache_result == false){
-		
-		//$cache->clean(array("twitter_cache"));
+	$url = 'https://api.twitter.com/1.1/statuses/user_timeline.json';
+	$getfield = '?screen_name='.$username.'&count='.$amount;
+	$requestMethod = 'GET';
 	
-		$amount = 1;
-		$username = variable_get("twitter_post_username", "");
+	require_once('TwitterAPIExchange.php');
 	
-		$settings = array(
-			'oauth_access_token' => "291090092-LrAaOhaIWTkcoWU1mOJuUALcS6LqULKkEOz4zrjw",
-			'oauth_access_token_secret' => "b8eFfQWrQpDOhxzOyzbdf6sQDSy7zYYEsB2M2Mv0sKo",
-			'consumer_key' => "mD8CXHoxkDbiEcHYX36ykg",
-			'consumer_secret' => "nt4OY4mfY4j81mC7qGSwri97hNLtZzUZu49xE5u3OY"
-		);
-	
-		$url = 'https://api.twitter.com/1.1/statuses/user_timeline.json';
-		$getfield = '?screen_name='.$username.'&count='.$amount;
-		$requestMethod = 'GET';
-		
-		require_once('TwitterAPIExchange.php');
-
-		$twitter = new TwitterAPIExchange($settings);
-		$tweet = json_decode($twitter->setGetfield($getfield)
-				 ->buildOauth($url, $requestMethod)
-				 ->performRequest(),true);
-			 
-		/*for($i=0;$i<$amount;$i++){
-			 
-			$result .= makeClickableLinks($tweet[$i]['text']);
-			$result .= ('<br>');
-				
-			$date = explode(" ", $tweet[$i]['created_at']);
-			$datetime = $date[sizeof($date)-1] . "-" .date('m', strtotime($date[1])). "-" . $date[2] . " " . $date[3];
-			$result .= time_elapsed_string($datetime);
-			$result .= '<br><br>';
-		}*/
-		
-		//$cache->save($result, "tweet", array("twitter_cache"), 3600);  //3600 = 1 hour in seconds
-		
-		$result .= "<!-- TWEET WAS NOT CACHED -->";
+	$twitter = new TwitterAPIExchange($settings);
+	$tweet = json_decode($twitter->setGetfield($getfield)
+			 ->buildOauth($url, $requestMethod)
+			 ->performRequest(),true);
     
-    //}else{
-    	//$result = $cache_result;
-    	
-    	//$result .= "<!-- TWEET WAS CACHED -->";
-    //}   
-    
-    return $tweet[0];
+    	return $tweet[0];
     
 }
 
@@ -171,7 +142,7 @@ function getCurrentTweet(){
  *
  *
  * @return
- *   The Html for the Exelin Events Block
+ *   The Html for the Block
  */
 function twitter_post_contents(){
 
