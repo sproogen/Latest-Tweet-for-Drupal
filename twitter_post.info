@@ -1,6 +1,6 @@
 name = Twitter Post
 description = A Block to display a users latest tweet.
-package = JamesG
+package = JamesG Modules
 core = 7.x
 
 version = 7.x-1.2

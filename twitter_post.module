@@ -114,26 +114,26 @@ function getCurrentTweet(){
 	
 	$amount = 1;
 	$username = variable_get("twitter_post_username", "");
-	
+
 	$settings = array(
 		'oauth_access_token' => "291090092-LrAaOhaIWTkcoWU1mOJuUALcS6LqULKkEOz4zrjw",
 		'oauth_access_token_secret' => "b8eFfQWrQpDOhxzOyzbdf6sQDSy7zYYEsB2M2Mv0sKo",
 		'consumer_key' => "mD8CXHoxkDbiEcHYX36ykg",
 		'consumer_secret' => "nt4OY4mfY4j81mC7qGSwri97hNLtZzUZu49xE5u3OY"
 	);
-	
+
 	$url = 'https://api.twitter.com/1.1/statuses/user_timeline.json';
 	$getfield = '?screen_name='.$username.'&count='.$amount;
 	$requestMethod = 'GET';
 	
 	require_once('TwitterAPIExchange.php');
-	
+
 	$twitter = new TwitterAPIExchange($settings);
 	$tweet = json_decode($twitter->setGetfield($getfield)
 			 ->buildOauth($url, $requestMethod)
 			 ->performRequest(),true);
     
-    	return $tweet[0];
+    return $tweet[0];
     
 }
 
